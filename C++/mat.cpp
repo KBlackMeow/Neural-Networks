@@ -231,14 +231,5 @@ class mat{
             return this->column;
         }
 
-        mat inverse(){
-            mat temmat= mat::eye(this->column);
-            if(this->column!=this->row){
-                cout<<"can not inverse"<<endl;
-                return temmat;
-            }
-
-        }
-
 
 };
