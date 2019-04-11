@@ -92,7 +92,6 @@ if __name__ =="__main__":
         num=0
         hit=0
         for i in range(len(x)):
-            d.train(x[i],y[i],1)
             out=d.get_out(x[i])
             v=np.linalg.norm(y[i]-out[-1])
             if v < 0.5:
