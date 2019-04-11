@@ -48,11 +48,6 @@ class NN:
             hi.append(tem)
         return hi
 
-    def g(self):
-        y=self.out()
-        g=(y-self.o)
-        return g
-
     def train(self,inp,y,r):
         hi=self.get_out(inp)
         lost=hi[-1]-y
@@ -60,11 +55,11 @@ class NN:
         for i in range(len(self.ls)):
             l=self.ls[-(i+1)]
             a=active1(np.array(hi[-(i+1)]))
-            g=np.dot(r,np.multiply(g,a))
+            g=np.multiply(g,a)
             tg=np.dot(l[0].T,g)
             dw=np.dot(g,hi[-(i+2)].T)
-            l[0]=l[0] -dw
-            l[1]=l[1] -g
+            l[0]=l[0] - np.dot(dw,r)
+            l[1]=l[1] -np.dot(g,r)
             g=tg
             
 if __name__ =="__main__":
@@ -117,7 +112,7 @@ if __name__ =="__main__":
     def show():
         j=0
         for i in range(len(x)):
-            d.train(x[i],y[i],1)
+            #d.train(x[i],y[i],1)
             out=d.get_out(x[i])
             print("[test %02d] [input]:"%j,x[i].T,y[i].T,"[output]: ",out[-1]) 
             j+=1
