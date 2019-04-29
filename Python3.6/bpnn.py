@@ -127,11 +127,11 @@ class Neu_layer1:
         return temout
 
     def gd(self,rate,g):
-        g=rate*np.multiply(g,sigmoid1(np.array(self.h)))
+        g=np.multiply(g,sigmoid1(np.array(self.h)))
         tg=np.dot(self.w.T,g)
         dw=np.dot(g,self.i.T)
-        self.w=self.w -dw
-        self.b =self.b -g
+        self.w=self.w -rate*dw
+        self.b =self.b -rate*g
         return tg
     
 class Neu_net1:
