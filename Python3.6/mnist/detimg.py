@@ -10,7 +10,6 @@ import matplotlib.image as mpimg
 from PIL import Image
 import numpy as np
 import pytorch_cnn as cnn
-import svdnn
 
 def sig(x):
     x=x*10
@@ -39,6 +38,5 @@ print (lena)
 plt.imshow(lena,cmap="gray") 
 plt.axis('on') 
 plt.show()
-out1=svdnn.detect(lena)
 out2=cnn.detect(lena)
-print ("svd =",out1,"cnn =",out2)
+print ("cnn =",out2)
