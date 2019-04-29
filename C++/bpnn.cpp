@@ -80,10 +80,8 @@ class neu_net{
     mat** getoutput(mat *input){
         mat* temp=input;
         mat ** output=new mat*[this->length];
-
         for(int i=0;i<this->length;i++){
-
-            mat *tem =*(*(this->weight[i])*(temp))+this->b[i];
+            mat *tem =this->weight[i]->dot(temp)->add(this->b[i]);
             double *dous = tem->todoubles();
             int len=tem->getrow()*tem->getcolumn();
             for(int j=0; j<len;j++){
@@ -91,6 +89,7 @@ class neu_net{
             }
             output[i]=new mat(tem->getrow(),tem->getcolumn(),dous);
             temp=output[i];
+
         }
         return output;
     }
@@ -99,7 +98,7 @@ class neu_net{
     void train(mat* x,mat *y,double r){
 
         mat ** h =this->getoutput(x);
-        mat * g = new mat(*h[this->length-1]-y);
+        mat * g = new mat(h[this->length-1]->sub(y));
 
         for(int i=this->length-1;i>=0;i--){
 
@@ -111,21 +110,30 @@ class neu_net{
             for(int j=0;j<len;j++){
                 tg[j]=r*tg[j]*sigmoid1(tdb[j]);
             }
+
             g = new mat(g->getrow(),g->getcolumn(),tg);
 
-            this->b[i]= *(this->b[i])-g;
+            mat * temb =this->b[i]->sub(g);
+            delete this->b[i];
+            this->b[i]= temb;
 
             if(i==0){
 
-                mat *dw=(*g)*(x->trans());
-                this->weight[i]= *(this->weight[i]) - dw;
+                mat *dw=g->dot(x->trans());
+                mat * temw= this->weight[i]->sub(dw);
+                delete this->weight[i];
+                this->weight[i] = temw;
             }
             else{
-                mat *dw =(*g)*(h[i-1]->trans());
-                this->weight[i]= *(this->weight[i]) - dw;
+                mat *dw =g->dot(h[i-1]->trans());
+                mat * temw= this->weight[i]->sub(dw);
+                delete this->weight[i];
+                this->weight[i] = temw;
+
             }
 
-            g=(*this->weight[i]->trans())*(g);
+            g = this->weight[i]->trans()->dot(g);
+
 
         }
 
@@ -165,13 +173,15 @@ int main()
     for(int j=0;j<10;j++) {
         auto start = system_clock::now();
         for(int i=0;i<1000;i++){
+
             for(int j=0;j<14;j++){
                 mat inp =mat(4,1,datset[j]);
                 mat y=mat(1,1,b[j]);
                 n.train(&inp,&y,1);
-            }
-        }
 
+            }
+
+        }
         double cot=0;
         for(int j=0;j<14;j++){
             mat inp =mat(4,1,datset[j]);
